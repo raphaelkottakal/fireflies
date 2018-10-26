@@ -30,28 +30,29 @@ directionalLight.position.x = guiOptions.lightX;
 directionalLight.position.y = guiOptions.lightY;
 directionalLight.position.z = guiOptions.lightZ;
 var directionalLightHelper = new THREE.DirectionalLightHelper( directionalLight, guiOptions.lightHelperSize );
-scene.add( directionalLightHelper );
+// scene.add( directionalLightHelper );
 scene.add( directionalLight );
 
 var backWallGeometry = new THREE.PlaneGeometry( window.innerWidth, window.innerHeight, 1, 1 );
 var backWallMaterial = new THREE.MeshPhongMaterial({
-	color: utilMakeColor('wallColor'),
+	color: utilMakeColorKey('wallColor'),
 	side: THREE.DoubleSide,
 	// wireframe: true
 });
 var backWall = new THREE.Mesh(backWallGeometry, backWallMaterial);
-scene.add(backWall);
+backWall.position.setZ(-20);
+// scene.add(backWall);
 
 var firstFirefly = new Firefly(
 	{ h: 350, s: 0.9, v: 0.3 },
-	{ x: 0, y: 0, z: 20},
-	4
+	{ x: 0, y: 0, z: 0},
+	2
 	);
 scene.add(firstFirefly);
 
-var light = new THREE.PointLight( 0x00ff00, 1, 50 , 2 );
-light.position.set( 0, 0, 20 );
-scene.add( light );
+// var light = new THREE.PointLight( 0x00ff00, 1, 50 , 2 );
+// light.position.set( 0, 0, 20 );
+// scene.add( light );
 // console.log(firstFirefly);
 
 
@@ -61,6 +62,9 @@ var animate = function(time) {
 	// firstFirefly.rotation.y += 0.02;
 	// light.position.x += 1;
 	// firstFirefly.position.x += 1;
+	firstFirefly.applyForce(new THREE.Vector3(0, -0.1, 0));
+	firstFirefly.move();
+	firstFirefly.bounceOffCorners();
 	renderer.render(scene, camera);
 	stats.end();
 	requestAnimationFrame(animate);
@@ -91,10 +95,10 @@ var onWindowResize = function() {
 
 var setupGui = function() {
 	var gui = new dat.GUI();
-	gui.addColor(colorPalette, 'wallColor').onChange(function() {
-		var newWallColor = utilMakeColor('wallColor');
-		backWall.material.color.set(newWallColor);
-	});
+	// gui.addColor(colorPalette, 'wallColor').onChange(function() {
+	// 	var newWallColor = utilMakeColorKey('wallColor');
+	// 	backWall.material.color.set(newWallColor);
+	// });
 	gui.add(guiOptions, 'orbitControls').onChange(function() {
 		controls.enabled = guiOptions.orbitControls;
 	});

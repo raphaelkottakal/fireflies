@@ -7,5 +7,5 @@ var ControleOptions = function() {
 	this.lightY = 150;
   this.lightZ = 200;
   this.lightHelperSize = 100;
-  this.orbitControls = true;
+  this.orbitControls = false;
 };
