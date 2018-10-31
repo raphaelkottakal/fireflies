@@ -44,9 +44,9 @@ backWall.position.setZ(-20);
 // scene.add(backWall);
 
 var firstFirefly = new Firefly(
-	{ h: 350, s: 0.9, v: 0.3 },
+	{ h: 60, s: 0.9, v: 0.3 },
 	{ x: 0, y: 0, z: 0},
-	2
+	4
 	);
 scene.add(firstFirefly);
 
@@ -62,7 +62,7 @@ var animate = function(time) {
 	// firstFirefly.rotation.y += 0.02;
 	// light.position.x += 1;
 	// firstFirefly.position.x += 1;
-	firstFirefly.applyForce(new THREE.Vector3(0, -0.1, 0));
+	// firstFirefly.applyForce(new THREE.Vector3(0, -0.1, 0));
 	firstFirefly.move();
 	firstFirefly.bounceOffCorners();
 	renderer.render(scene, camera);
@@ -119,6 +119,13 @@ var setupGui = function() {
 	
 };
 
+var handelClick = function(e) {
+	var x = e.clientX - window.innerWidth / 2;
+	var y = window.innerHeight / 2 - e.clientY;
+	firstFirefly.setTarget(x, y);
+}
+
 window.addEventListener('resize', onWindowResize, true);
+window.addEventListener('click', handelClick, true);
 window.onload = setupGui;
 })();

@@ -2,8 +2,10 @@ var Firefly = function(color, position, size) {
   THREE.Group.call(this);
   this.color = color;
   this.position = position;
+  this.target = position;
   this.size = size;
   this.velocity = new THREE.Vector3(0, 0, 0);
+  // this.velocity = new THREE.Vector3(5, 5, 0);
   this.acceleration = new THREE.Vector3(0, 0, 0);
 
   var geometry = new THREE.SphereBufferGeometry( size, 8, 8 );
@@ -36,7 +38,7 @@ var Firefly = function(color, position, size) {
     color: 0xffffff
   });
   var glow = new THREE.Sprite(glowMaterial);
-  glow.scale.set(40, 40, 1);
+  glow.scale.set(15 * size, 15 * size, 1);
   // glow.position.set(10, 0, 0);
   this.add(glow);
 
@@ -47,10 +49,21 @@ Firefly.prototype = Object.create(THREE.Group.prototype);
 Firefly.prototype.constructor = Firefly;
 
 Firefly.prototype.move = function() {
-  this.velocity.add(this.acceleration);
-  this.velocity.clampLength(0, 5);
+  // this.velocity.add(this.acceleration);
+  // this.velocity.clampLength(0, 5);
+  if (this.position.distanceTo(this.target) < 4) {
+    this.velocity.multiplyScalar(0);
+  }
   this.position.add(this.velocity);
-  this.acceleration.multiplyScalar(0);
+  // this.acceleration.multiplyScalar(0);
+}
+
+Firefly.prototype.setTarget = function(x, y) {
+  var targetVector = new THREE.Vector3(x, y, 0);
+  this.target = targetVector.clone();
+  var directionVector = targetVector.sub(this.position);
+  directionVector.normalize().multiplyScalar(5);
+  this.velocity = directionVector;
 }
 
 Firefly.prototype.applyForce = function(force) {
@@ -58,11 +71,17 @@ Firefly.prototype.applyForce = function(force) {
 }
 
 Firefly.prototype.bounceOffCorners = function() {
-  if (this.position.x > window.innerWidth / 2) {
-    this.position.setX(window.innerWidth / 2);
+  if (this.position.x + this.size > window.innerWidth / 2) {
+    this.position.setX(window.innerWidth / 2 - this.size);
     this.velocity.multiply(new THREE.Vector3(-1, 1, 1));
-  } else if (this.position.y < -window.innerHeight / 2) {
-    this.position.setY(-window.innerHeight / 2);
+  } else if (this.position.x - this.size < -window.innerWidth / 2) {
+    this.position.setX(-window.innerWidth / 2  + this.size);
+    this.velocity.multiply(new THREE.Vector3(-1, 1, 1));
+  } else if (this.position.y - this.size < -window.innerHeight / 2) {
+    this.position.setY(-window.innerHeight / 2  + this.size);
+    this.velocity.multiply(new THREE.Vector3(1, -1, 1));
+  } else if (this.position.y + this.size > window.innerHeight / 2) {
+    this.position.setY(window.innerHeight / 2 - this.size);
     this.velocity.multiply(new THREE.Vector3(1, -1, 1));
   }
 }
